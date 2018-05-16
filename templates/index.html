@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <mate name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>首页</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/animate.css">
+    <!--菜单-->
+    <link rel="stylesheet" href="../static/lib/tocbot/tocbot.css">
+    <link rel="stylesheet" href="../static/css/me.css">
+</head>
+
+<body>
+<!--导航-->
+<nav class="ui inverted attached  segment me-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary menu stackable  ">
+            <h2 class="ui teal header item">Blog</h2>
+            <a href="{% url 'index' %}" class="active animated pulse m-item item m-mobile-hide"><i class="home icon"></i>首页</a>
+            <a href="{% url 'types'%}" class="m-item item m-mobile-hide"><i class="idea icon"></i>分类</a>
+            <a href="{% url 'tags' %}" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <a href="{% url 'archives'%}" class="m-item item m-mobile-hide"><i class="clone icon"></i>归档</a>
+            <a href="{% url 'about'%}" class="m-item item m-mobile-hide"><i class="info icon"></i>关于我</a>
+            <div class="right m-item item m-mobile-hide">
+                <div class="ui icon inverted gray input">
+                    <input type="text" placeholder="Search...">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#" class="ui black icon button m-right-top m-mobile-show menu toggle">
+        <i class="icon sidebar"></i>
+    </a>
+</nav>
+
+<!--中间内容-->
+<div id="waypoint" class="me-padded-tb-big m-container animated fadeInUpBig">
+    <div class="ui container">
+        <div class="ui stackable grid">
+            <!--左边博客内容部分-->
+            <div class="eleven wide column">
+                <!--博客篇数header-->
+                <div class="ui top attached segment">
+                    <div class="ui middle aligned two column grid">
+                        <div class="column">
+                            <h3 class="ui teal header">博客</h3>
+                        </div>
+                        <div class="right aligned column">
+                            共<h2 class="ui orange header m-inline-block m-text-thin">&nbsp; {{ article_list.count }} &nbsp;</h2>篇
+                        </div>
+                    </div>
+                </div>
+                <!--博客内容content-->
+                <div class="ui attached segment">
+                    {% for art in article %}
+                    <div class="ui padded vertical segment me-padded-tb-large">
+                        <div class="ui mobile reversed stackable grid">
+                            <!--左侧文字-->
+                            <div class=" eleven wide column">
+                                <!--标题-->
+                                <h3 class="ui header">
+                                    {{ art.title }}
+                                </h3>
+                                <!--内容-->
+                                <p class="m-text">
+                                    {% if art.guide|length >= 140 %}
+                                    {{ art.guide|slice:"140"}}......
+                                    {% else%}
+                                        {{ art.guide }}
+                                    {% endif %}
+                                </p>
+                                <!--文字标签-->
+                                <div class="ui stackable grid">
+                                    <div class="eleven wide column">
+                                        <div class="ui mini link list horizontal">
+                                            <!--用户信息（头像+用户名）-->
+                                            <div class="item">
+                                                <img src="https://picsum.photos/100/100/?image=1005" alt="" class="ui avatar image">
+                                                <div class="content">
+                                                    <a class="header">{{ art.publisher.name }}</a>
+                                                </div>
+                                            </div>
+                                            <!--发布时间-->
+                                            <div class="item">
+                                                <i class="calendar icon"></i>{{ art.add_time }}
+                                            </div>
+                                            <!--浏览次数-->
+                                            <div class="item">
+                                                <i class="eye icon"></i>2312
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--标签-->
+                                    {% if art.tag.count > 0 %}
+                                    <div class="right aligned five wide column">
+                                    {% for t in art.tag.values %}
+                                        <a href="#" target="_blank" class="ui teal basic label me-padded-tiny m-text-thin">{{ t.name }}</a>
+                                    {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!--右侧图片-->
+                            <div class="five wide column">
+                                <a href="#" target="_blank">
+                                    <h3></h3>
+                                    <br>
+                                    <img src="{{ art.image.url}}" alt="" class="ui rounded image" style="width: 18em;height:10em ">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!--博客分页-->
+                <div class="ui bottom attached segment">
+                    <div class="ui middle aligned two column grid">
+                        {% if article.has_previous %}
+                            <div class="column">
+                                <a href="?page={{ article.previous_page_number }}" class="ui teal basic mini button">上一页</a>
+                            </div>
+                        {% elif article.has_next %}
+                            <div class="middle aligned column">
+
+                            </div>
+                             <div class="right aligned column">
+                                <a href="?page={{ article.next_page_number }}" class="ui teal basic mini button">下一页</a>
+                             </div>
+                        {% else %}
+                            <div class="column">
+                                <a href="?page={{ article.previous_page_number }}" class="ui teal basic mini button">上一页</a>
+                            </div>
+                            <div class="right aligned column">
+                                <a href="?page={{ article.next_page_number }}" class="ui teal basic mini button">下一页</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!--右边博客导航部分-->
+            <div class="five wide column">
+                <!--分类-->
+                <div class="ui segments">
+                    <div class="ui secondary segment">
+                        <!--顶部-->
+                        <div class="ui two column grid">
+                            <div class="column">
+                                <i class="idea icon"></i>分类
+                            </div>
+                            <div class="right aligned column">
+                                <a href="#" target="_blank">more<i class="angle double right icon"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--详细栏-->
+                    <div class="ui segment teal">
+                        <div class="ui fluid vertical menu">
+                            {% for type in types %}
+                            <a href="#" class="item">
+                                {{ type.name }}
+                                <div class="ui teal basic left pointing label">{{ type.article_set.count }}</div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <!--标签-->
+                <div class="ui segments m-margin-top-large">
+                    <div class="ui secondary segment">
+                        <!--顶部-->
+                        <div class="ui two column grid">
+                            <div class="column">
+                                <i class="tags icon"></i>标签
+                            </div>
+                            <div class="right aligned column">
+                                <a href="#" target="_blank">more<i class="angle double right icon"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--标签-->
+                    <div class="ui teal segment">
+                        {% for tag in tags %}
+                        <a class="ui teal basic label m-margin-tb-tiny">
+                            {{ tag.name }}<div class="detail">{{ tag.article_set.count }}</div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!--最新推荐-->
+                <div class="ui segments m-margin-top-large">
+                    <div class="ui secondary segment">
+                        <i class="bookmark icon"></i>最新推荐
+                    </div>
+                    {% for recommend in recommends %}
+                    <div class="ui segment">
+                        <a href="#"  class="m-black m-text-thin">
+                            {% if recommend.title|length >= 10 %}
+                                    {{ recommend.title|slice:"10"}}...
+                                    {% else%}
+                                        {{ recommend.title }}
+                                    {% endif %}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!---二维码-->
+                <div class="ui horizontal divider header m-margin-top-large">
+                   <h4>扫码关注我</h4>
+                </div>
+                <div class="ui card centered" style="width:10em">
+                    <img src="static/images/wechat.jpg" alt="" class="ui rounded image ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--右下角悬浮菜单-->
+<div id="toolbar" class="me-padded m-fixed m-right-bottom " style="display: none" >
+    <div class="ui vertical icon buttons">
+        <div id="toTop-button" class="ui button icon"><i class="chevron up icon"></i></div>
+        <button type="button" class="ui m-item-float m-mobile-hide wechat icon button"><i class="weixin icon"></i></button>
+        <div class="ui button menu float m-mobile-show icon"><i class="chevron down icon"></i></div>
+    </div>
+</div>
+<!--微信二维码-->
+<div id="qrcode" class="ui flowing popup transition hidden wechat-show" style="width: 130px">
+    <!--img src="./static/images/wechat.jpg" alt="" class="ui rounded image" width="120px"-->
+</div>
+<!--底部footer-->
+<footer class="ui inverted vertical segment me-padded-tb-massive">
+    <div class="ui center aligned container">
+        <!--分成4个格子-->
+        <div class="ui  inverted divided stackable grid">
+            <!--图片格子-->
+            <div class="three wide column">
+                <div class="ui inverted link list">
+                    <div class="item">
+                        <img src="static/images/wechat.jpg" class="ui rounded image" alt="" style="width: 110px">
+                    </div>
+                </div>
+            </div>
+            <!--博客格子-->
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-thin m-text-spaced">
+                    最新博客
+                </h4>
+                <div class="ui inverted link list">
+                    <a href="#" class="item">PHP Storm（安装指南）</a>
+                    <a href="#" class="item">Intellij IDEA</a>
+                    <a href="#" class="item">eclipse SDK（配置方式）</a>
+                </div>
+            </div>
+            <!--联系我格子-->
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-thin m-text-spaced">
+                    联系我
+                </h4>
+                <div class="ui inverted link list">
+                    <a href="#" class="item">Email:466390825@qq.com</a>
+                    <a href="#" class="item">QQ:466390825</a>
+                    <a href="#" class="item">Wechat:minmo12_13</a>
+                </div>
+            </div>
+            <!--说明格子-->
+            <div class="seven wide column">
+                <h4 class="ui inverted header m-text-thin m-text-spaced">
+                    博客说明
+                </h4>
+                <p class="m-text-thin m-text-spaced m-opacity-mini">
+                    这是一个个人博客，用于记录个人编程相关问题和日志。
+                </p>
+            </div>
+        </div>
+        <!--底部版权声明-->
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-thin m-text-spaced m-opacity-tiny">
+            Copyright © 2018 - 2019 Blog Designed by Zhenyanxin
+        </p>
+    </div>
+</footer>
+<!--jquery和semantic引用-->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="../static/lib/tocbot/tocbot.min.js"></script>
+<script src="../static/lib/tocbot/tocbot.js"></script>
+<script src="../static/lib/qrcode/qrcode.js"></script>
+<script src="../static/lib/qrcode/qrcode.min.js"></script>
+<script src="../static/js/jquery.scrollTo.min.js"></script>
+<script src="../static/lib/waypoints/jquery.waypoints.js"></script>
+<script src="../static/lib/waypoints/jquery.waypoints.min.js"></script>
+<script>
+    //tocbot初始化
+    tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.js-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.js-toc-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+    });
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+    //悬浮隐藏
+    $('.menu.float').click(function () {
+        $('.m-item-float').toggleClass('m-mobile-hide');
+    });
+    //悬浮微信按钮
+    $('.wechat').popup({
+        popup:$('.wechat-show.popup'),
+        position:'left center'
+    });
+    //自动生成二维码
+    var qrcode = new QRCode("qrcode", {
+        text: "www.baidu.com",
+        width: 110,
+        height: 110,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    //到顶上
+    $('#toTop-button').click(function () {
+        $(window).scrollTo(0,1000)
+    });
+    //指定位置出现悬浮
+    var waypoint = new Waypoint({
+        element: document.getElementById('waypoint'),
+        handler: function(direction) {
+            if(direction=='down'){
+                $('#toolbar').show();
+            }else {
+                $('#toolbar').hide(500);
+            }
+        }
+    })
+</script>
+</body>
+</html>
